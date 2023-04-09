@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ShopWorld.DataAccessLayer\ShopWorld.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\ShopWorld.Shared\ShopWorld.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
