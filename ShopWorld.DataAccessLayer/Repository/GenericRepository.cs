@@ -134,6 +134,23 @@ namespace ShopWorld.DataAccessLayer
                 return false;
             }
         }
+        public bool DeleteById(object Id)
+        {
+            try
+            {
+                TEntity entityToDelete=GetById(Id);
+                if (_context.Entry(entityToDelete).State == EntityState.Detached)
+                {
+                    _dbSet.Attach(entityToDelete);
+                }
+                _dbSet.Remove(entityToDelete);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         #endregion Delete
     }
 }
