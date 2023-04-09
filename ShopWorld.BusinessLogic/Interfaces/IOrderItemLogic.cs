@@ -1,10 +1,10 @@
-﻿using BusinessEntities;
-using BusinessEntities.Models;
+﻿using ShopWorld.Shared;
+using ShopWorld.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BusinessLogic
+namespace ShopWorld.BusinessLogic
 {
     public interface IOrderItemLogic
     {
@@ -14,6 +14,6 @@ namespace BusinessLogic
         bool UpdateOrderItem(OrderItem OrderItem);
         bool DeleteOrderItem(int OrderItemId);
         List<OrderItem> AddOrderItems(int OrderId, int[] ItemId, int[] Quantity, decimal[] Price);
-        List<OrderItemView> GetOrderViewItems(int OrderId);
+        List<OrderItemResult> GetOrderViewItems(int OrderId);
     }
 }

@@ -11,7 +11,12 @@ namespace ShopWorld.BusinessLogic
         public static void InjectBusinessLogic(IServiceCollection Services)
         {
             //Services.AddScoped<IAuthorizationLogic, AuthorizationLogic>();
-
+            Services.AddScoped<IEmployeeLogic, EmployeeLogic>();
+            Services.AddScoped<ICustomerLogic, CustomerLogic>();
+            Services.AddScoped<IItemLogic, ItemLogic>();
+            Services.AddScoped<IOrderLogic, OrderLogic>();
+            Services.AddScoped<IOrderItemLogic, OrderItemLogic>();
+            
             Services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 
