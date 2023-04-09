@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
 using ShopWorld.BusinessLogic;
+using ShopWorld.DataAccessLayer;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -14,6 +16,14 @@ builder.Services.AddSwaggerGen();
 DomainInjection.InjectBusinessLogic(builder.Services);
 DomainInjection.InjectJwtTokens(builder.Services, builder.Configuration["JWT:ValidAudience"], builder.Configuration["JWT:ValidIssuer"], builder.Configuration["JWT:Secret"]);
 DomainInjection.InjectCors(builder.Services);
+//DbContext Configuration
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        connectionString,
+        sqlServerOptionsAction: sqlOptions => {
+            sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
+        }
+));
 //Set you serialization options
 builder.Services.AddControllers(options =>
     {

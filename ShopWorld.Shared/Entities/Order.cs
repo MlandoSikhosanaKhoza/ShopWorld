@@ -1,4 +1,4 @@
-﻿using BusinessEntities.Enums;
+﻿using ShopWorld.Shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
