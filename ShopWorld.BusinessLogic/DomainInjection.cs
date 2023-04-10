@@ -10,7 +10,7 @@ namespace ShopWorld.BusinessLogic
     {
         public static void InjectBusinessLogic(IServiceCollection Services)
         {
-            //Services.AddScoped<IAuthorizationLogic, AuthorizationLogic>();
+            Services.AddScoped<IAuthorizationLogic, AuthorizationLogic>();
             Services.AddScoped<IEmployeeLogic, EmployeeLogic>();
             Services.AddScoped<ICustomerLogic, CustomerLogic>();
             Services.AddScoped<IItemLogic, ItemLogic>();
