@@ -8,7 +8,7 @@ namespace ShopWorld.BusinessLogic
     public interface IItemLogic
     {
         List<Item> GetAllItems();
-        void AddItem(Item Item);
+        Item AddItem(Item Item);
         Item GetItem(int ItemId);
         bool UpdateItem(Item Item);
         bool DeleteItem(int ItemId);

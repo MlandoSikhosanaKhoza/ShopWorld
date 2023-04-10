@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ShopWorld.BusinessLogic\ShopWorld.BusinessLogic.csproj" />
     <ProjectReference Include="..\ShopWorld.DataAccessLayer\ShopWorld.DataAccessLayer.csproj" />
     <ProjectReference Include="..\ShopWorld.Shared\ShopWorld.Shared.csproj" />

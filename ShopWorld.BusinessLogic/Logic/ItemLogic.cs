@@ -22,10 +22,11 @@ namespace ShopWorld.BusinessLogic
             return ItemRepository.Get(e => !e.IsDeleted).ToList();
         }
 
-        public void AddItem(Item Item)
+        public Item AddItem(Item Item)
         {
-            ItemRepository.Insert(Item);
+            Item itemAdded=ItemRepository.Insert(Item);
             _unitOfWork.SaveChanges();
+            return itemAdded;
         }
 
         public Item GetItem(int ItemId)

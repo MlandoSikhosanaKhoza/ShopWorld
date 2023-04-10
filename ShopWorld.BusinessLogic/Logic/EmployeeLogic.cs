@@ -22,10 +22,11 @@ namespace ShopWorld.BusinessLogic
             return EmployeeRepository.Get(e => !e.IsDeleted).ToList();
         }
 
-        public void AddEmployee(Employee Employee)
+        public Employee AddEmployee(Employee Employee)
         {
-            EmployeeRepository.Insert(Employee);
+            Employee employee=EmployeeRepository.Insert(Employee);
             _unitOfWork.SaveChanges();
+            return employee;
         }
 
         public Employee GetEmployee(int EmployeeId)
