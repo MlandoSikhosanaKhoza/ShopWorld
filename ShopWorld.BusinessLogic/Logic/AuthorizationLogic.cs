@@ -51,5 +51,25 @@ namespace ShopWorld.BusinessLogic
             }
             return result;  
         }
+
+        public LoginResult LoginAsAdmin()
+        {
+            List<Claim> claims = new List<Claim>();
+            LoginResult result = new LoginResult();
+            DateTime expiration=DateTime.Now.AddDays(7);
+            result.IsAuthorized = true;
+
+            #region Claims
+            claims.Add(new Claim("CustomerId", "0"));
+            claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            #endregion Claims
+
+            result.JwtToken = JwtTokenWriter.WriteTokenAsString(
+                _configuration["JWT:Secret"],
+                _configuration["JWT:ValidIssuer"],
+                _configuration["JWT:ValidAudience"],
+                expiration, claims);
+            return result;
+        }
     }
 }

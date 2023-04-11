@@ -23,5 +23,17 @@ namespace ShopWorld.API.Controllers
         public IActionResult _Login(MobileLoginInputModel Input) {
             return Ok(_authorizationLogic.Login(Input.MobileNumber));
         }
+
+        /// <summary>
+        /// You can only login as a customer
+        /// </summary>
+        /// <param name="Input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Produces("application/json", Type = typeof(LoginResult))]
+        public IActionResult _LoginAsAdmin()
+        {
+            return Ok(_authorizationLogic.LoginAsAdmin());
+        }
     }
 }

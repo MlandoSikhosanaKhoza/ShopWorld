@@ -10,5 +10,6 @@ namespace ShopWorld.BusinessLogic
     public interface IAuthorizationLogic
     {
         public LoginResult Login(string MobileNumber);
+        LoginResult LoginAsAdmin();
     }
 }
