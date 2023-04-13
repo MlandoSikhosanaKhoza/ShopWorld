@@ -21,6 +21,13 @@ namespace ShopWorld.API.Controllers
             return Ok(_employeeLogic.GetAllEmployees());
         }
 
+        [HttpGet]
+        [Produces("application/json",Type =typeof(Employee))]
+        public IActionResult _GetEmployee(int EmployeeId)
+        {
+            return Ok(_employeeLogic.GetEmployee(EmployeeId));
+        }
+
         [HttpPost]
         [Produces("application/json",Type=typeof(Employee))]
         public IActionResult _AddEmployee(Employee employee)
