@@ -26,7 +26,7 @@ namespace ShopWorld.BusinessLogic
 
         public List<Order> GetOngoingOrdersForCustomer(int CustomerId)
         {
-            return OrderRepository.Get(o => o.CustomerId == CustomerId && o.DateFulfilled == null && o.EmployeeId == null).Select(x => new Order
+            return OrderRepository.Get(o => o.CustomerId == CustomerId && o.DateFulfilled == null && o.EmployeeId == null, includeProperties: $"{nameof(Customer)}").Select(x => new Order
             {
                 OrderId = x.OrderId,
                 CustomerId = x.CustomerId,
@@ -43,71 +43,45 @@ namespace ShopWorld.BusinessLogic
 
         public List<Order> GetCompleteOrdersForCustomer(int CustomerId)
         {
-            return OrderRepository.Get(o => o.CustomerId == CustomerId && o.DateFulfilled != null && o.EmployeeId != null).Select(x=>new Order{ 
-                OrderId=x.OrderId,
-                CustomerId=x.CustomerId,
-                EmployeeId=x.EmployeeId,
-                Employee=x.Employee,
-                DateFulfilled=x.DateFulfilled,
-                DateCreated=x.DateCreated,
-                OrderReference=x.OrderReference,
-                VAT=x.VAT,
-                Subtotal=x.Subtotal,
-                GrandTotal=x.GrandTotal
-            }).ToList();
+            return OrderRepository.Get(o => o.CustomerId == CustomerId && o.DateFulfilled != null && o.EmployeeId != null, includeProperties: $"{nameof(Employee)},{nameof(Customer)}").ToList();
         }
 
         public List<Order> GetOngoingOrders()
         {
-            return OrderRepository.Get(o => o.DateFulfilled == null && o.EmployeeId == null).Select(x => new Order
-            {
-                OrderId = x.OrderId,
-                CustomerId = x.CustomerId,
-                Customer=x.Customer,
-                EmployeeId = x.EmployeeId,
-                Employee = x.Employee,
-                DateFulfilled = x.DateFulfilled,
-                DateCreated = x.DateCreated,
-                OrderReference = x.OrderReference,
-                VAT = x.VAT,
-                Subtotal = x.Subtotal,
-                GrandTotal = x.GrandTotal
-            }).ToList();
+            return OrderRepository.Get(o => o.DateFulfilled == null && o.EmployeeId == null, includeProperties: $"{nameof(Customer)}").ToList();
         }
 
         public List<Order> GetCompleteOrders()
         {
-            return OrderRepository.Get(o => o.DateFulfilled != null && o.EmployeeId != null).Select(x => new Order
-            {
-                OrderId = x.OrderId,
-                CustomerId = x.CustomerId,
-                Customer = x.Customer,
-                EmployeeId = x.EmployeeId,
-                Employee = x.Employee,
-                DateFulfilled = x.DateFulfilled,
-                DateCreated = x.DateCreated,
-                OrderReference = x.OrderReference,
-                VAT = x.VAT,
-                Subtotal = x.Subtotal,
-                GrandTotal = x.GrandTotal
-            }).ToList();
+            return OrderRepository.Get(o => o.DateFulfilled != null && o.EmployeeId != null, includeProperties: $"{nameof(Employee)},{nameof(Customer)}").ToList();
         }
 
         public List<CustomerOrderResult> GetNumberOfCustomerOrders()
         {
             List<CustomerOrderResult> customerOrderViews = new List<CustomerOrderResult>();
-            var customerOrderQuery = from c in CustomerRepository.GetAll()
-                                     join o in (OrderRepository.GetAll().GroupBy(or => or.CustomerId).Select(n=>new { n.Key,Count=n.Count() }))
-                                     on c.CustomerId equals o.Key
-                                     select new CustomerOrderResult
-                                     {
-                                         CustomerId=c.CustomerId,
-                                         Name=c.Name,
-                                         Surname=c.Surname,
-                                         Mobile=c.Mobile,
-                                         NumOfOrders=o.Count
-                                     };
-            customerOrderViews = customerOrderQuery.ToList();
+            if (CustomerRepository.Any() && OrderRepository.Any())
+            {
+                try
+                {
+                    List<Customer> customers=CustomerRepository.Get().ToList();
+                    List<Order> orders=OrderRepository.Get().ToList();
+                    var customerOrderQuery = from c in customers
+                                             join o in (orders.GroupBy(or => or.CustomerId).Select(n => new { n.Key, Count = n.Count() }))
+                                             on c.CustomerId equals o.Key
+                                             select new CustomerOrderResult
+                                             {
+                                                 CustomerId = c.CustomerId,
+                                                 Name = c.Name,
+                                                 Surname = c.Surname,
+                                                 Mobile = c.Mobile,
+                                                 NumOfOrders = o.Count
+                                             };
+                    customerOrderViews = customerOrderQuery.ToList();
+                }
+                catch (Exception)
+                {   
+                }
+            }
             return customerOrderViews;
         }
 
@@ -115,38 +89,50 @@ namespace ShopWorld.BusinessLogic
         {
             //var totalSpentQuery = OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
             //    o => new { CustomerId = o.Key, Price = o.Sum(o => o.GrandTotal) });
-            var customerOrderQuery = from c in CustomerRepository.GetAll()
-                                     join o in (OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
-                o => new { CustomerId = o.Key, Price = o.Sum(o => o.GrandTotal) }))
-                                     on c.CustomerId equals o.CustomerId
-                                     select new CustomerOrderPriceResult
-                                     {
-                                         CustomerId = c.CustomerId,
-                                         Name = c.Name,
-                                         Surname = c.Surname,
-                                         Mobile = c.Mobile,
-                                         Price = o.Price
-                                     };
-            return customerOrderQuery.ToList();
+            List<CustomerOrderPriceResult> customerOrderPrices = new List<CustomerOrderPriceResult>();
+            if (CustomerRepository.Any() && OrderRepository.Any())
+            {
+                var customerOrderQuery = from c in CustomerRepository.GetAll()
+                                         join o in (OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
+                    o => new { CustomerId = o.Key, Price = o.Sum(o => o.GrandTotal) }))
+                                         on c.CustomerId equals o.CustomerId
+                                         select new CustomerOrderPriceResult
+                                         {
+                                             CustomerId = c.CustomerId,
+                                             Name = c.Name,
+                                             Surname = c.Surname,
+                                             Mobile = c.Mobile,
+                                             Price = o.Price
+                                         };
+                customerOrderPrices = customerOrderQuery.ToList();
+            }
+                
+            return customerOrderPrices;
         }
 
         public List<CustomerOrderPriceResult> GetAverageSpentOfCustomerOrders()
         {
             //var totalSpentQuery = OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
             //    o => new { CustomerId = o.Key, Price = o.Sum(o => o.GrandTotal) });
-            var customerOrderQuery = from c in CustomerRepository.GetAll()
-                                     join o in (OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
-                o => new { CustomerId = o.Key, Price = o.Average(o => o.GrandTotal) }))
-                                     on c.CustomerId equals o.CustomerId
-                                     select new CustomerOrderPriceResult
-                                     {
-                                         CustomerId = c.CustomerId,
-                                         Name = c.Name,
-                                         Surname = c.Surname,
-                                         Mobile = c.Mobile,
-                                         Price = o.Price
-                                     };
-            return customerOrderQuery.ToList();
+            List<CustomerOrderPriceResult> customerOrderPrices = new List<CustomerOrderPriceResult>();
+            if (CustomerRepository.Any() && OrderRepository.Any())
+            {
+                var customerOrderQuery = from c in CustomerRepository.GetAll()
+                                         join o in (OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
+                    o => new { CustomerId = o.Key, Price = o.Average(o => o.GrandTotal) }))
+                                         on c.CustomerId equals o.CustomerId
+                                         select new CustomerOrderPriceResult
+                                         {
+                                             CustomerId = c.CustomerId,
+                                             Name = c.Name,
+                                             Surname = c.Surname,
+                                             Mobile = c.Mobile,
+                                             Price = o.Price
+                                         };
+                customerOrderPrices = customerOrderQuery.ToList();
+            }
+                
+            return customerOrderPrices;
         }
 
         public Order AddOrder(Order Order)

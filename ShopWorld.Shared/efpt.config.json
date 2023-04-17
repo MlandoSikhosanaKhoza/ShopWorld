@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 2,
-   "ContextClassName": "GoodForMooDbContext",
+   "ContextClassName": "ApplicationDbContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -15,27 +15,27 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[Customers]",
+         "Name": "[dbo].[Customer]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Employees]",
+         "Name": "[dbo].[Employee]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Items]",
+         "Name": "[dbo].[Item]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[OrderItems]",
+         "Name": "[dbo].[Order]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Orders]",
+         "Name": "[dbo].[OrderItem]",
          "ObjectType": 0
       }
    ],
-   "UiHint": "LAPTOP-F3NRTE7D.GoodForMooDb",
+   "UiHint": "laptop-f3nrte7d.GoodForMooDb.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": true,
