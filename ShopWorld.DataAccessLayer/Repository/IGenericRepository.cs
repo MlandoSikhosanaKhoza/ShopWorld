@@ -20,8 +20,11 @@ namespace ShopWorld.DataAccessLayer
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = "");
+        bool Any();
+        int Count();
         TEntity Insert(TEntity entity);
         bool Update(TEntity entity);
         bool Delete(TEntity entity);
+
     }
 }

@@ -32,7 +32,15 @@ namespace ShopWorld.DataAccessLayer
         {
             return _dbSet.Find(id);
         }
+        public bool Any()
+        {
+            return _dbSet.Any();
+        }
 
+        public int Count()
+        {
+            return _dbSet.Count();
+        }
         public async Task<TEntity> GetByIdAsync(object id)
         {
             return await _dbSet.FindAsync(id);
