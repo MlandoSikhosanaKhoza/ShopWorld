@@ -39,7 +39,8 @@ namespace ShopWorld.BusinessLogic
                 result.IsAuthorized= true;
                 
                 #region Claims
-                claims.Add(new Claim("CustomerId", customer.CustomerId+""));
+                claims.Add(new Claim("CustomerId", $"{customer.CustomerId}"));
+                claims.Add(new Claim(ClaimTypes.Name, $"{customer.Name} {customer.Surname}"));
                 claims.Add(new Claim(ClaimTypes.Role, "Customer"));
                 #endregion Claims
 
