@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShopWorld.BusinessLogic;
+using ShopWorld.Shared;
 using ShopWorld.Shared.Entities;
 
 namespace ShopWorld.API.Controllers
@@ -22,9 +23,9 @@ namespace ShopWorld.API.Controllers
 
         [HttpPost]
         [Produces("application/json",Type=typeof(Item))]
-        public IActionResult _AddItem(Item Item)
+        public IActionResult _AddItem(ItemInputModel ItemToAdd)
         {
-            return Ok(_itemLogic.AddItem(Item));
+            return Ok(_itemLogic.AddItem(ItemToAdd));
         }
         
         [HttpGet]
@@ -35,8 +36,8 @@ namespace ShopWorld.API.Controllers
         }
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
-        public IActionResult _UpdateItem(Item Item) { 
-            return Ok(_itemLogic.UpdateItem(Item));
+        public IActionResult _UpdateItem(ItemInputModel ItemToUpdate) { 
+            return Ok(_itemLogic.UpdateItem(ItemToUpdate));
         }
 
         [HttpPost]
