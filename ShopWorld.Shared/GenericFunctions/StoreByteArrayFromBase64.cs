@@ -13,7 +13,7 @@ namespace ShopWorld.Shared
             byte[] byteArray = Convert.FromBase64String(Base64);
             string imagestore = Guid.NewGuid().ToString();
             string imageName = $"{imagestore}{Extension}";
-            string path = Path.Combine(DirectoryPath,imageName, Extension, imagestore);
+            string path = Path.Combine(DirectoryPath,imageName);
             System.IO.File.WriteAllBytes(path, byteArray);
             return path;
         }
