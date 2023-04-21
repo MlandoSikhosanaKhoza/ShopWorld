@@ -26,7 +26,7 @@ namespace ShopWorld.BusinessLogic
         {
             LoginResult result = new LoginResult();
             List<Claim> claims = new List<Claim>();
-            DateTime expiration= DateTime.Now.AddDays(7);
+            DateTime expiration= DateTime.UtcNow.AddDays(7);
             
             Customer? customer = CustomerRepository.Get(c=>c.Mobile==MobileNumber).FirstOrDefault();
             
@@ -57,7 +57,7 @@ namespace ShopWorld.BusinessLogic
         {
             List<Claim> claims = new List<Claim>();
             LoginResult result = new LoginResult();
-            DateTime expiration=DateTime.Now.AddDays(7);
+            DateTime expiration=DateTime.UtcNow.AddDays(7);
             result.IsAuthorized = true;
 
             #region Claims

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using ShopWorld.BusinessLogic;
 using ShopWorld.Shared.Entities;
 using ShopWorld.Shared;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ShopWorld.API.Controllers
 {
@@ -14,30 +16,36 @@ namespace ShopWorld.API.Controllers
         public OrderItemController(IOrderItemLogic orderItemLogic) { 
             _orderItemLogic = orderItemLogic;
         }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet]
         [Produces("application/json", Type = typeof(List<OrderItem>))]
         public IActionResult _GetAllOrderItems() {
             return Ok(_orderItemLogic.GetAllOrderItems());
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         [Produces("application/json", Type = typeof(OrderItem))]
         public IActionResult _AddOrderItem(OrderItem OrderItem) {
             return Ok(_orderItemLogic.AddOrderItem(OrderItem));
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet]
         [Produces("application/json", Type = typeof(OrderItem))]
         public IActionResult _GetOrderItem(int OrderItemId) { 
             return Ok(_orderItemLogic.GetOrderItem(OrderItemId));
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _UpdateOrderItem(OrderItem OrderItem) {
             return Ok(_orderItemLogic.UpdateOrderItem(OrderItem));
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _DeleteOrderItem(int OrderItemId) {

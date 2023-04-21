@@ -30,11 +30,7 @@ namespace ShopWorld.BusinessLogic
 
         public static void InjectJwtTokens(IServiceCollection Services,string ValidAudience,string ValidIssuer,string Secret)
         {
-            Services.AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
@@ -42,7 +38,6 @@ namespace ShopWorld.BusinessLogic
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidateLifetime = true,
                     ValidAudience = ValidAudience,
                     ValidIssuer = ValidIssuer,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secret))
