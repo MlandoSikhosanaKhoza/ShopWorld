@@ -90,7 +90,7 @@ namespace ShopWorld.API.Controllers
             return Ok(_orderLogic.GetOrder(OrderId));
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = "Admin")]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _UpdateOrder(Order Order) {
