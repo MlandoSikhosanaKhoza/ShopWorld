@@ -35,6 +35,23 @@ namespace ShopWorld.BusinessLogic
             return itemAdded;
         }
 
+        public async Task<string> GetBase64ImageForImageName(string ImageName)
+        {
+            string path = System.IO.Path.Combine(_webHostEnvironment.WebRootPath,"Images", ImageName);
+            byte[] bytes;
+            string base64;
+            if (!string.IsNullOrEmpty(ImageName))
+            {
+                if (System.IO.File.Exists(path))
+                {
+                    bytes = await System.IO.File.ReadAllBytesAsync(path);
+                    base64 = Convert.ToBase64String(bytes);
+                    return base64;
+                }
+            }
+            return "";    
+        }
+
         public Item GetItem(int ItemId)
         {
             return ItemRepository.GetById(ItemId);

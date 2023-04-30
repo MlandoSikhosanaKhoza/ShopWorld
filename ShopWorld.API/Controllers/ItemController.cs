@@ -24,6 +24,14 @@ namespace ShopWorld.API.Controllers
             return Ok(_itemLogic.GetAllItems());
         }
 
+        [HttpGet]
+        [Produces("text/plain",Type =typeof(string))]
+        public async Task<IActionResult> _GetBase64ImageForImageName(string ImageName)
+        {
+            string base64=await _itemLogic.GetBase64ImageForImageName(ImageName);
+            return Ok(base64);
+        }
+
         [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = "Admin")]
         [HttpPost]
         [Produces("application/json",Type=typeof(Item))]

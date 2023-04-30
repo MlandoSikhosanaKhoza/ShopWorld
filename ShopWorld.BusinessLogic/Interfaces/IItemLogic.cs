@@ -13,5 +13,6 @@ namespace ShopWorld.BusinessLogic
         Item GetItem(int ItemId);
         bool UpdateItem(ItemInputModel Item);
         bool DeleteItem(int ItemId);
+        Task<string> GetBase64ImageForImageName(string ImageName);
     }
 }
