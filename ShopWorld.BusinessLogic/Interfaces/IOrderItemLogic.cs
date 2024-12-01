@@ -1,19 +1,16 @@
-﻿using ShopWorld.Shared;
-using ShopWorld.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ShopWorld.Shared.Models;
+using ShopWorld.Shared;
 
 namespace ShopWorld.BusinessLogic
 {
     public interface IOrderItemLogic
     {
-        List<OrderItem> GetAllOrderItems();
-        OrderItem AddOrderItem(OrderItem OrderItem);
-        OrderItem GetOrderItem(int OrderItemId);
-        bool UpdateOrderItem(OrderItem OrderItem);
+        IEnumerable<OrderItemModel> GetAllOrderItems();
+        OrderItemModel AddOrderItem(OrderItemModel OrderItem);
+        OrderItemModel GetOrderItem(int OrderItemId);
+        bool UpdateOrderItem(OrderItemModel OrderItem);
         bool DeleteOrderItem(int OrderItemId);
-        List<OrderItem> AddOrderItems(int OrderId, int[] ItemId, int[] Quantity);
-        List<OrderItemResult> GetOrderViewItems(int OrderId);
+        IEnumerable<OrderItemModel> AddOrderItems(int OrderId, int[] ItemId, int[] Quantity);
+        IEnumerable<OrderItemResult> GetOrderViewItems(int OrderId);
     }
 }

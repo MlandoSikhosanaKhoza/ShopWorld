@@ -1,41 +1,38 @@
-using Microsoft.EntityFrameworkCore;
 using ShopWorld.BusinessLogic;
-using ShopWorld.DataAccessLayer;
+using ShopWorld.DAL;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")??"";
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddHttpContextAccessor();
 #region Required Dependancy Injection
-DomainInjection.InjectBusinessLogic(builder.Services);
-DomainInjection.InjectJwtTokens(builder.Services, builder.Configuration["JWT:ValidAudience"], builder.Configuration["JWT:ValidIssuer"], builder.Configuration["JWT:Secret"]);
-DomainInjection.InjectCors(builder.Services);
-//DbContext Configuration
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        connectionString,
-        sqlServerOptionsAction: sqlOptions => {
-            sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
-        }
-));
+builder.Services.AddRepository(connectionString).AddBusinessLogic();
+
+//The two below will move to Api
+builder.Services.AddJwtToken(builder.Configuration["JWT:ValidAudience"]??"", builder.Configuration["JWT:ValidIssuer"]??"", builder.Configuration["JWT:Secret"]??"");
+BusinessLogicExtensions.AddCors(builder.Services);
+
 //Set you serialization options
 builder.Services.AddControllers(options =>
-    {
-        options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
-    }).AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = null;
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    });
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+}).AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 #endregion Required Dependancy Injection
-
 var app = builder.Build();
+
+//Seeding Data
+app.Services.CreateScope().ServiceProvider.InitializeData();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -45,11 +42,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 
 app.UseAuthorization();
-app.UseAuthentication();
-
+app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();

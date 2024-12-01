@@ -1,19 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ShopWorld.DataAccessLayer\ShopWorld.DataAccessLayer.csproj" />
-    <ProjectReference Include="..\ShopWorld.Shared\ShopWorld.Shared.csproj" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
-    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <ProjectReference Include="..\ShopWorld.DAL\ShopWorld.DAL.csproj" />
+    <ProjectReference Include="..\ShopWorld.Shared\ShopWorld.Shared.csproj" />
   </ItemGroup>
 
 </Project>

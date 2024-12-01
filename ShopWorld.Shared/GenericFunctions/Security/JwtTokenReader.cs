@@ -14,14 +14,20 @@ namespace ShopWorld.Shared
         public static string GetTokenValue(string JwtToken, string TokenField)
         {
             JwtSecurityToken token = (JwtSecurityToken)new JwtSecurityTokenHandler().ReadJwtToken(JwtToken);
-            string tokenValue = token.Claims.Where(c => c.Type.Equals(TokenField)).FirstOrDefault().Value;
+            string tokenValue = token.Claims?.Where(c => c.Type.Equals(TokenField)).FirstOrDefault()?.Value ?? "";
             return tokenValue;
         }
-        //Read a JWT Token
-        public static string GetTokenValue(IHttpContextAccessor ContextAccessor, string TokenField)
+        //Read JWT Token from 
+        public static JwtSecurityToken GetJwtToken(string JwtToken)
         {
-            JwtSecurityToken token = (JwtSecurityToken)new JwtSecurityTokenHandler().ReadJwtToken(ContextAccessor.HttpContext.Request.Headers["Autorization"].ToString());
-            string tokenValue = token?.Claims.Where(c => c.Type.Equals(TokenField)).FirstOrDefault()?.Value;
+            JwtSecurityToken token = (JwtSecurityToken)new JwtSecurityTokenHandler().ReadJwtToken(JwtToken);
+            return token;
+        }
+        //Read a JWT Token
+        public static string? GetTokenValue(IHttpContextAccessor ContextAccessor, string TokenField)
+        {
+            JwtSecurityToken token = (JwtSecurityToken)new JwtSecurityTokenHandler().ReadJwtToken(ContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Split(" ").Last());
+            string tokenValue = token?.Claims.Where(c => c.Type.Equals(TokenField)).FirstOrDefault()?.Value??"";
             return tokenValue;
         }
     }

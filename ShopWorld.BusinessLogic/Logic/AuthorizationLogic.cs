@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
-using ShopWorld.DataAccessLayer;
+using ShopWorld.DAL;
 using ShopWorld.Shared;
-using ShopWorld.Shared.Entities;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,9 +55,9 @@ namespace ShopWorld.BusinessLogic
 
         public LoginResult LoginAsAdmin()
         {
-            List<Claim> claims = new List<Claim>();
-            LoginResult result = new LoginResult();
-            DateTime expiration=DateTime.UtcNow.AddDays(7);
+            List<Claim> claims  = new List<Claim>();
+            LoginResult result  = new LoginResult();
+            DateTime expiration = DateTime.UtcNow.AddDays(7);
             result.IsAuthorized = true;
 
             #region Claims

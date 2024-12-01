@@ -1,53 +1,52 @@
-﻿using ShopWorld.Shared.Entities;
+﻿
 using ShopWorld.Shared;
-using ShopWorld.DataAccessLayer;
+using ShopWorld.DAL;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using ShopWorld.Shared.Models;
+using AutoMapper;
 namespace ShopWorld.BusinessLogic
 {
-    public class EmployeeLogic:IEmployeeLogic
+    public class EmployeeLogic : IEmployeeLogic
     {
-        private GenericRepository<Employee> EmployeeRepository { get; set; }
-        private IUnitOfWork _unitOfWork;
-        public EmployeeLogic(IUnitOfWork UnitOfWork)
+        private IEmployeeRepository _employeeRepository;
+        private IMapper _mapper;
+        public EmployeeLogic(IEmployeeRepository employeeRepository, IMapper mapper)
         {
-            _unitOfWork = UnitOfWork;
-            EmployeeRepository = UnitOfWork.GetRepository<Employee>();
+            _employeeRepository = employeeRepository;
+            _mapper = mapper;
         }
 
-        public List<Employee> GetAllEmployees()
+        public IEnumerable<EmployeeModel> GetAllEmployees()
         {
-            return EmployeeRepository.Get(e => !e.IsDeleted).ToList();
+            return _employeeRepository.GetAllEmployees().Select(_mapper.Map<EmployeeModel>);
         }
 
-        public Employee AddEmployee(Employee Employee)
+        public EmployeeModel AddEmployee(EmployeeModel EmployeeModel)
         {
-            Employee employee=EmployeeRepository.Insert(Employee);
-            _unitOfWork.SaveChanges();
-            return employee;
+            Employee employee = _mapper.Map(EmployeeModel,new Employee());
+            employee          = _employeeRepository.AddEmployee(employee); 
+            return _mapper.Map<EmployeeModel>(employee);
         }
 
-        public Employee GetEmployee(int EmployeeId)
+        public EmployeeModel GetEmployee(int EmployeeId)
         {
-            return EmployeeRepository.GetById(EmployeeId);
+            Employee employee = _employeeRepository.GetEmployee(EmployeeId);
+            return _mapper.Map<EmployeeModel>(employee);
         }
 
-        public bool UpdateEmployee(Employee Employee)
+        public bool UpdateEmployee(EmployeeModel Employee)
         {
-            EmployeeRepository.Update(Employee);
-            _unitOfWork.SaveChanges();
-            return true;
+            Employee employee = _employeeRepository.GetEmployee(Employee.EmployeeId);
+            _mapper.Map(Employee, employee);
+            return _employeeRepository.UpdateEmployee(employee);
         }
 
         public bool DeleteEmployee(int EmployeeId)
         {
-            Employee employee = GetEmployee(EmployeeId);
-            employee.IsDeleted = true;
-            UpdateEmployee(employee);
-            _unitOfWork.SaveChanges();
-            return true;
+            return _employeeRepository.DeleteEmployee(EmployeeId);
         }
     }
 }

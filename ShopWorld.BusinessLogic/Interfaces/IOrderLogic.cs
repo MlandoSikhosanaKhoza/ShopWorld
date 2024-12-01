@@ -1,5 +1,5 @@
 ﻿using ShopWorld.Shared;
-using ShopWorld.Shared.Entities;
+using ShopWorld.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,17 +8,17 @@ namespace ShopWorld.BusinessLogic
 {
     public interface IOrderLogic
     {
-        List<Order> GetAllOrders();
-        List<Order> GetOngoingOrdersForCustomer(int CustomerId);
-        List<Order> GetCompleteOrdersForCustomer(int CustomerId);
-        List<Order> GetOngoingOrders();
-        List<Order> GetCompleteOrders();
-        List<CustomerOrderResult> GetNumberOfCustomerOrders();
-        List<CustomerOrderPriceResult> GetTotalSpentOfCustomerOrders();
-        List<CustomerOrderPriceResult> GetAverageSpentOfCustomerOrders();
-        Order AddOrder(Order Order);
-        Order GetOrder(int OrderId);
-        bool UpdateOrder(Order Order);
+        IEnumerable<OrderModel> GetAllOrders();
+        IEnumerable<OrderModel> GetOngoingOrdersForCustomer(int CustomerId);
+        IEnumerable<OrderModel> GetCompleteOrdersForCustomer(int CustomerId);
+        IEnumerable<OrderModel> GetOngoingOrders();
+        IEnumerable<OrderModel> GetCompleteOrders();
+        IEnumerable<CustomerOrderResult> GetNumberOfCustomerOrders();
+        IEnumerable<CustomerOrderPriceResult> GetTotalSpentOfCustomerOrders();
+        IEnumerable<CustomerOrderPriceResult> GetAverageSpentOfCustomerOrders();
+        OrderModel AddOrder(OrderModel Order);
+        OrderModel GetOrder(int OrderId);
+        bool UpdateOrder(OrderModel Order);
         bool DeleteOrder(int OrderId);
     }
 }

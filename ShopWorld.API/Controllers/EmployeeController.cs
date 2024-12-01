@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShopWorld.BusinessLogic;
-using ShopWorld.Shared.Entities;
+using ShopWorld.Shared;
+using ShopWorld.Shared.Models;
 
 namespace ShopWorld.API.Controllers
 {
@@ -15,35 +16,72 @@ namespace ShopWorld.API.Controllers
         public EmployeeController(IEmployeeLogic employeeLogic) { 
             _employeeLogic = employeeLogic;
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
-        [Produces("application/json",Type=typeof(List<Employee>))]
+        [Produces("application/json",Type=typeof(List<EmployeeModel>))]
         public IActionResult _GetAllEmployees()
         {
             return Ok(_employeeLogic.GetAllEmployees());
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="EmployeeId"></param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
-        [Produces("application/json",Type =typeof(Employee))]
+        [Produces("application/json",Type = typeof(EmployeeModel))]
         public IActionResult _GetEmployee(int EmployeeId)
         {
             return Ok(_employeeLogic.GetEmployee(EmployeeId));
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
-        [Produces("application/json",Type=typeof(Employee))]
-        public IActionResult _AddEmployee(Employee employee)
+        [Produces("application/json",Type = typeof(EmployeeModel))]
+        public IActionResult _AddEmployee(EmployeeModel employee)
         {
-            return Ok(_employeeLogic.AddEmployee(employee));
+            if(ModelState.IsValid)
+            {
+                return Ok(_employeeLogic.AddEmployee(employee));
+            }
+            return BadRequest(ModelState.Values);
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
-        [Produces("application/json",Type =typeof(bool))]
-        public IActionResult _UpdateEmployee(Employee employee)
+        [Produces("application/json",Type = typeof(bool))]
+        public IActionResult _UpdateEmployee(EmployeeModel employee)
         {
-            return Ok(_employeeLogic.UpdateEmployee(employee));
+            if (ModelState.IsValid)
+            {
+                return Ok(_employeeLogic.UpdateEmployee(employee));
+            }
+            return BadRequest(ModelState.Values);
         }
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="EmployeeId"></param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json",Type=typeof(bool))]
         public IActionResult _DeleteEmployee(int EmployeeId)

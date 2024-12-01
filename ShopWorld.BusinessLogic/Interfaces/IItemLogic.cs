@@ -1,16 +1,13 @@
 ﻿using ShopWorld.Shared;
-using ShopWorld.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ShopWorld.Shared.Models;
 
 namespace ShopWorld.BusinessLogic
 {
     public interface IItemLogic
     {
-        List<Item> GetAllItems();
-        Item AddItem(ItemInputModel Item);
-        Item GetItem(int ItemId);
+        IEnumerable<ItemModel> GetAllItems();
+        ItemModel AddItem(ItemInputModel Item);
+        ItemModel GetItem(int ItemId);
         bool UpdateItem(ItemInputModel Item);
         bool DeleteItem(int ItemId);
         Task<string> GetBase64ImageForImageName(string ImageName);

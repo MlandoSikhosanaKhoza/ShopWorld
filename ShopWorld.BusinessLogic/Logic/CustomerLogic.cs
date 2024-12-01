@@ -1,83 +1,78 @@
-﻿using ShopWorld.Shared.Entities;
+﻿
 using ShopWorld.Shared;
-using ShopWorld.DataAccessLayer;
+using ShopWorld.DAL;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using ShopWorld.Shared.Models;
+using AutoMapper;
 namespace ShopWorld.BusinessLogic
 {
     public class CustomerLogic:ICustomerLogic
     {
-        private GenericRepository<Customer> CustomerRepository { get; set; }
+        private ICustomerRepository _customerRepository { get; set; }
+        private IMapper _mapper;
         private IUnitOfWork _unitOfWork;
-        public CustomerLogic(IUnitOfWork UnitOfWork)
+        public CustomerLogic(ICustomerRepository customerRepository, IMapper mapper)
         {
-            _unitOfWork = UnitOfWork;
-            CustomerRepository = UnitOfWork.GetRepository<Customer>();
+            _customerRepository = customerRepository;
+            _mapper = mapper;
         }
-        public List<Customer> GetAllCustomers()
+        public IEnumerable<CustomerModel> GetAllCustomers()
         {
-            return CustomerRepository.GetAll().ToList();
+            return _customerRepository.GetAllCustomers().Select(_mapper.Map<CustomerModel>);
         }
 
-        public List<Customer> SearchForCustomers(string Search)
+        public IEnumerable<CustomerModel> SearchForCustomers(string Search)
         {
-            Search = Search.ToLower();
-            return (CustomerRepository.Get(s => s.Name.ToLower().Contains(Search) ||
-                 s.Surname.ToLower().Contains(Search))).ToList();
+            return _customerRepository.SearchForCustomers(Search).Select(_mapper.Map<CustomerModel>);
         }
         public bool MobileNumberExists(string Mobile)
         {
-            if (string.IsNullOrEmpty(Mobile))
+            return _customerRepository.MobileNumberExists( Mobile);
+        }
+        public CustomerModel AddCustomer(CustomerModel Customer)
+        {
+            Customer customer = _mapper.Map<Customer>(Customer);
+            _customerRepository.AddCustomer(customer);
+            return _mapper.Map<CustomerModel>(customer);
+        }
+        public bool UpdateCustomer(CustomerModel Customer)
+        {
+            Customer customer = _customerRepository.GetCustomer(Customer.CustomerId);
+
+            if (customer == null)
             {
                 return false;
             }
-            return CustomerRepository.Get(u => u.Mobile.Equals(Mobile)).Any();
-        }
-        public Customer AddCustomer(Customer Customer)
-        {
-            Customer customer=CustomerRepository.Insert(Customer);
-            _unitOfWork.SaveChanges();
-            return customer;
-        }
-        public bool UpdateCustomer(Customer Customer)
-        {
-            CustomerRepository.Update(Customer);
-            _unitOfWork.SaveChanges();
+
+            _mapper.Map(Customer, customer);
+            _customerRepository.UpdateCustomer(customer);
+
             return true;
         }
         public bool DeleteCustomer(int CustomerId)
         {
-            CustomerRepository.DeleteById(CustomerId);
-            _unitOfWork.SaveChanges();
-            return true;
+            return _customerRepository.DeleteCustomer(CustomerId);
         }
-        public Customer GetCustomer(int CustomerId)
+        public CustomerModel GetCustomer(int CustomerId)
         {
-            return CustomerRepository.GetById(CustomerId);
-        }
-
-        public Customer GetCustomerByMobileNumber(string MobileNumber)
-        {
-            Customer customer = CustomerRepository.Get(c => c.Mobile.Equals(MobileNumber)).FirstOrDefault();
-            return customer;
+            Customer customer = _customerRepository.GetCustomer(CustomerId);
+            return _mapper.Map<CustomerModel>(customer);
         }
 
-        public Customer ConfigureCustomer(Customer Customer)
+        public CustomerModel GetCustomerByMobileNumber(string MobileNumber)
         {
-            Customer customer = GetCustomerByMobileNumber(Customer.Mobile);
-            if (customer==null)
-            {
-                customer = AddCustomer(Customer);
-            }
-            else
-            {
-                customer.Name = Customer.Name;
-                customer.Surname = Customer.Surname;
-                UpdateCustomer(customer);
-            }
-            return customer;
+            Customer customer = _customerRepository.GetCustomerByMobileNumber(MobileNumber);
+            return _mapper.Map<CustomerModel>(customer);
+        }
+
+        public CustomerModel ConfigureCustomer(CustomerModel CustomerModel)
+        {
+            Customer customer = _mapper.Map<Customer>(CustomerModel);
+            customer = _customerRepository.ConfigureCustomer(customer);
+            return _mapper.Map(customer,CustomerModel);
         }
     }
 }

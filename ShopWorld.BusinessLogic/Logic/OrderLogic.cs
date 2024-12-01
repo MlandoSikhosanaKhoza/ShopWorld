@@ -1,164 +1,93 @@
-﻿using ShopWorld.Shared.Entities;
+﻿
 using ShopWorld.Shared;
-using ShopWorld.DataAccessLayer;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using AutoMapper;
+using ShopWorld.Shared.Models;
+using ShopWorld.DAL;
+using Microsoft.AspNetCore.Http;
 namespace ShopWorld.BusinessLogic
 {
     public class OrderLogic : IOrderLogic
     {
-        private GenericRepository<Order> OrderRepository { get; set; }
-        private GenericRepository<Customer> CustomerRepository { get; set; }
-        private IUnitOfWork _unitOfWork;
-        public OrderLogic(IUnitOfWork UnitOfWork)
+        private readonly IOrderRepository _orderRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _mapper;
+        public OrderLogic(IOrderRepository orderRepository, ICustomerRepository customerRepository, IMapper mapper,IHttpContextAccessor contextAccessor)
         {
-            _unitOfWork = UnitOfWork;
-            OrderRepository = UnitOfWork.GetRepository<Order>();
-            CustomerRepository = UnitOfWork.GetRepository<Customer>();
+            _orderRepository = orderRepository;
+            _customerRepository = customerRepository;
+            _mapper = mapper;
         }
 
-        public List<Order> GetAllOrders()
+        public IEnumerable<OrderModel> GetAllOrders()
         {
-            return OrderRepository.GetAll().ToList();
+            return _orderRepository.GetAllOrders().Select(_mapper.Map<OrderModel>);
         }
 
-        public List<Order> GetOngoingOrdersForCustomer(int CustomerId)
+        public IEnumerable<OrderModel> GetOngoingOrdersForCustomer(int CustomerId)
         {
-            return OrderRepository.Get(o => o.CustomerId == CustomerId && o.DateFulfilled == null && o.EmployeeId == null, includeProperties: $"{nameof(Customer)}").Select(x => new Order
-            {
-                OrderId = x.OrderId,
-                CustomerId = x.CustomerId,
-                EmployeeId = x.EmployeeId,
-                Employee = x.Employee,
-                DateFulfilled = x.DateFulfilled,
-                DateCreated = x.DateCreated,
-                OrderReference = x.OrderReference,
-                VAT = x.VAT,
-                Subtotal = x.Subtotal,
-                GrandTotal = x.GrandTotal
-            }).ToList();
+            return _orderRepository.GetOngoingOrdersForCustomer(CustomerId).Select(_mapper.Map<OrderModel>);
         }
 
-        public List<Order> GetCompleteOrdersForCustomer(int CustomerId)
+        public IEnumerable<OrderModel> GetCompleteOrdersForCustomer(int CustomerId)
         {
-            return OrderRepository.Get(o => o.CustomerId == CustomerId && o.DateFulfilled != null && o.EmployeeId != null, includeProperties: $"{nameof(Employee)},{nameof(Customer)}").ToList();
+            return _orderRepository.GetCompleteOrdersForCustomer(CustomerId).Select(_mapper.Map<OrderModel>);
         }
 
-        public List<Order> GetOngoingOrders()
+        public IEnumerable<OrderModel> GetOngoingOrders()
         {
-            return OrderRepository.Get(o => o.DateFulfilled == null && o.EmployeeId == null, includeProperties: $"{nameof(Customer)}").ToList();
+            return _orderRepository.GetOngoingOrders().Select(_mapper.Map<OrderModel>);
         }
 
-        public List<Order> GetCompleteOrders()
+        public IEnumerable<OrderModel> GetCompleteOrders()
         {
-            return OrderRepository.Get(o => o.DateFulfilled != null && o.EmployeeId != null, includeProperties: $"{nameof(Employee)},{nameof(Customer)}").ToList();
+            return _orderRepository.GetCompleteOrders().Select(_mapper.Map<OrderModel>);
         }
 
-        public List<CustomerOrderResult> GetNumberOfCustomerOrders()
+        public IEnumerable<CustomerOrderResult> GetNumberOfCustomerOrders()
         {
-            List<CustomerOrderResult> customerOrderViews = new List<CustomerOrderResult>();
-            if (CustomerRepository.Any() && OrderRepository.Any())
-            {
-                try
-                {
-                    List<Customer> customers=CustomerRepository.Get().ToList();
-                    List<Order> orders=OrderRepository.Get().ToList();
-                    var customerOrderQuery = from c in customers
-                                             join o in (orders.GroupBy(or => or.CustomerId).Select(n => new { n.Key, Count = n.Count() }))
-                                             on c.CustomerId equals o.Key
-                                             select new CustomerOrderResult
-                                             {
-                                                 CustomerId = c.CustomerId,
-                                                 Name = c.Name,
-                                                 Surname = c.Surname,
-                                                 Mobile = c.Mobile,
-                                                 NumOfOrders = o.Count
-                                             };
-                    customerOrderViews = customerOrderQuery.ToList();
-                }
-                catch (Exception)
-                {   
-                }
-            }
-            return customerOrderViews;
+            List<Customer> customers = _customerRepository.GetAllCustomers();
+            return _orderRepository.GetNumberOfCustomerOrders(customers);
         }
 
-        public List<CustomerOrderPriceResult> GetTotalSpentOfCustomerOrders()
+        public IEnumerable<CustomerOrderPriceResult> GetTotalSpentOfCustomerOrders()
         {
-            //var totalSpentQuery = OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
-            //    o => new { CustomerId = o.Key, Price = o.Sum(o => o.GrandTotal) });
-            List<CustomerOrderPriceResult> customerOrderPrices = new List<CustomerOrderPriceResult>();
-            if (CustomerRepository.Any() && OrderRepository.Any())
-            {
-                var customerOrderQuery = from c in CustomerRepository.GetAll()
-                                         join o in (OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
-                    o => new { CustomerId = o.Key, Price = o.Sum(o => o.GrandTotal) }))
-                                         on c.CustomerId equals o.CustomerId
-                                         select new CustomerOrderPriceResult
-                                         {
-                                             CustomerId = c.CustomerId,
-                                             Name = c.Name,
-                                             Surname = c.Surname,
-                                             Mobile = c.Mobile,
-                                             Price = o.Price
-                                         };
-                customerOrderPrices = customerOrderQuery.ToList();
-            }
-                
-            return customerOrderPrices;
+            List<Customer> customers = _customerRepository.GetAllCustomers();
+            return _orderRepository.GetTotalSpentOfCustomerOrders(customers);
         }
 
-        public List<CustomerOrderPriceResult> GetAverageSpentOfCustomerOrders()
+        public IEnumerable<CustomerOrderPriceResult> GetAverageSpentOfCustomerOrders()
         {
-            //var totalSpentQuery = OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
-            //    o => new { CustomerId = o.Key, Price = o.Sum(o => o.GrandTotal) });
-            List<CustomerOrderPriceResult> customerOrderPrices = new List<CustomerOrderPriceResult>();
-            if (CustomerRepository.Any() && OrderRepository.Any())
-            {
-                var customerOrderQuery = from c in CustomerRepository.GetAll()
-                                         join o in (OrderRepository.GetAll().GroupBy(o => o.CustomerId).Select(
-                    o => new { CustomerId = o.Key, Price = o.Average(o => o.GrandTotal) }))
-                                         on c.CustomerId equals o.CustomerId
-                                         select new CustomerOrderPriceResult
-                                         {
-                                             CustomerId = c.CustomerId,
-                                             Name = c.Name,
-                                             Surname = c.Surname,
-                                             Mobile = c.Mobile,
-                                             Price = o.Price
-                                         };
-                customerOrderPrices = customerOrderQuery.ToList();
-            }
-                
-            return customerOrderPrices;
+            List<Customer> customers = _customerRepository.GetAllCustomers();
+            return _orderRepository.GetAverageSpentOfCustomerOrders(customers);
         }
 
-        public Order AddOrder(Order Order)
+        public OrderModel AddOrder(OrderModel Order)
         {
-            Order OrderAdded = OrderRepository.Insert(Order);
-            _unitOfWork.SaveChanges();
-            return OrderAdded;
+            Order order     = _mapper.Map<Order>(Order);
+            order           = _orderRepository.AddOrder(order);
+            return _mapper.Map<OrderModel>(order);
         }
 
-        public Order GetOrder(int OrderId)
+        public OrderModel GetOrder(int OrderId)
         {
-            return OrderRepository.GetById(OrderId);
+            Order order = _orderRepository.GetOrder(OrderId);
+            return _mapper.Map<OrderModel>(order);
         }
 
-        public bool UpdateOrder(Order Order)
+        public bool UpdateOrder(OrderModel Order)
         {
-            OrderRepository.Update(Order);
-            _unitOfWork.SaveChanges();
-            return true;
+            Order order = _orderRepository.GetOrder(Order.OrderId);
+            _mapper.Map(Order, order);
+            return _orderRepository.UpdateOrder(order);
         }
 
         public bool DeleteOrder(int OrderId)
         {
-            OrderRepository.DeleteById(OrderId);
-            _unitOfWork.SaveChanges();
-            return true;
+            return _orderRepository.DeleteOrder(OrderId);
         }
     }
 }

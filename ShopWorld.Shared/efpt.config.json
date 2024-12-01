@@ -1,6 +1,6 @@
 ﻿{
-   "CodeGenerationMode": 2,
-   "ContextClassName": "ApplicationDbContext",
+   "CodeGenerationMode": 3,
+   "ContextClassName": "ShopWorld.bContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -27,21 +27,41 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Logistics]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Order]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[OrderItem]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[StockItem]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Supplier]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SupplierLocation]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Warehouse]",
+         "ObjectType": 0
       }
    ],
-   "UiHint": "laptop-f3nrte7d.GoodForMooDb.dbo",
+   "UiHint": "laptop-f3nrte7d.ShopWorld.b.dbo",
    "UncountableWords": null,
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": true,
    "UseDateOnlyTimeOnly": false,
    "UseDbContextSplitting": false,
-   "UseFluentApiOnly": false,
+   "UseFluentApiOnly": true,
    "UseHandleBars": false,
    "UseHierarchyId": false,
    "UseInflector": false,
@@ -52,6 +72,7 @@
    "UseNodaTime": false,
    "UseNullableReferences": false,
    "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
    "UseSpatial": false,
    "UseT4": false
 }

@@ -11,8 +11,11 @@ namespace ShopWorld.Shared
     {
         [Key]
         public int ItemId { get; set; }
+        [Required]
         public string ImageName { get; set; }
         public string Base64 { get; set; }
+        
+        [Required]
         [StringLength(40)]
         public string Description { get; set; }
         public decimal Price { get; set; }

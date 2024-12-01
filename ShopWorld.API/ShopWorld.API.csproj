@@ -1,23 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ShopWorld.BusinessLogic\ShopWorld.BusinessLogic.csproj" />
-    <ProjectReference Include="..\ShopWorld.DataAccessLayer\ShopWorld.DataAccessLayer.csproj" />
-    <ProjectReference Include="..\ShopWorld.Shared\ShopWorld.Shared.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShopWorld.BusinessLogic\ShopWorld.BusinessLogic.csproj" />
+    <ProjectReference Include="..\ShopWorld.DAL\ShopWorld.DAL.csproj" />
+    <ProjectReference Include="..\ShopWorld.Shared\ShopWorld.Shared.csproj" />
   </ItemGroup>
 
 </Project>

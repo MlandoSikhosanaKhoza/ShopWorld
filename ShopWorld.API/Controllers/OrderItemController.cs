@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShopWorld.BusinessLogic;
-using ShopWorld.Shared.Entities;
 using ShopWorld.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ShopWorld.Shared.Models;
 
 namespace ShopWorld.API.Controllers
 {
@@ -19,21 +19,21 @@ namespace ShopWorld.API.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet]
-        [Produces("application/json", Type = typeof(List<OrderItem>))]
+        [Produces("application/json", Type = typeof(List<OrderItemModel>))]
         public IActionResult _GetAllOrderItems() {
             return Ok(_orderItemLogic.GetAllOrderItems());
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
-        [Produces("application/json", Type = typeof(OrderItem))]
-        public IActionResult _AddOrderItem(OrderItem OrderItem) {
+        [Produces("application/json", Type = typeof(OrderItemModel))]
+        public IActionResult _AddOrderItem(OrderItemModel OrderItem) {
             return Ok(_orderItemLogic.AddOrderItem(OrderItem));
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpGet]
-        [Produces("application/json", Type = typeof(OrderItem))]
+        [Produces("application/json", Type = typeof(OrderItemModel))]
         public IActionResult _GetOrderItem(int OrderItemId) { 
             return Ok(_orderItemLogic.GetOrderItem(OrderItemId));
         }
@@ -41,7 +41,7 @@ namespace ShopWorld.API.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
-        public IActionResult _UpdateOrderItem(OrderItem OrderItem) {
+        public IActionResult _UpdateOrderItem(OrderItemModel OrderItem) {
             return Ok(_orderItemLogic.UpdateOrderItem(OrderItem));
         }
 
@@ -60,7 +60,7 @@ namespace ShopWorld.API.Controllers
         /// <param name="Quantity"></param>
         /// <returns></returns>
         [HttpPost]
-        [Produces("application/json",Type =typeof(List<OrderItem>))]
+        [Produces("application/json",Type =typeof(List<OrderItemModel>))]
         public IActionResult _AddOrderItems(OrderItemInputModel Input)
         {
             return Ok(_orderItemLogic.AddOrderItems(Input.OrderId, Input.ItemId, Input.Quantity));

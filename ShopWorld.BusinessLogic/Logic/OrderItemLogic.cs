@@ -1,81 +1,77 @@
-﻿using ShopWorld.Shared.Entities;
+﻿
 using ShopWorld.Shared;
-using ShopWorld.DataAccessLayer;
+using ShopWorld.DAL;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using ShopWorld.Shared.Models;
+using AutoMapper;
 namespace ShopWorld.BusinessLogic
 {
-    public class OrderItemLogic:IOrderItemLogic
+    public class OrderItemLogic : IOrderItemLogic
     {
-        private GenericRepository<OrderItem> OrderItemRepository { get; set; }
-        private GenericRepository<Order> OrderRepository { get; set; }
-        private GenericRepository<Item> ItemRepository { get; set; }
-        private IUnitOfWork _unitOfWork;
-        public OrderItemLogic(IUnitOfWork UnitOfWork)
+        private readonly IOrderItemRepository _orderItemRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IItemRepository _itemRepository;
+        private readonly IMapper _mapper;
+        public OrderItemLogic(IOrderRepository orderRepository, IOrderItemRepository orderItemRepository, IItemRepository itemRepository, IHttpContextAccessor contextAccessor, IMapper mapper)
         {
-            _unitOfWork = UnitOfWork;
-            OrderItemRepository = UnitOfWork.GetRepository<OrderItem>();
-            OrderRepository = UnitOfWork.GetRepository<Order>();
-            ItemRepository= UnitOfWork.GetRepository<Item>();
+            _orderRepository     = orderRepository;
+            _orderItemRepository = orderItemRepository;
+            _itemRepository      = itemRepository;
+            _mapper              = mapper;
         }
 
-        public List<OrderItem> GetAllOrderItems()
+        public IEnumerable<OrderItemModel> GetAllOrderItems()
         {
-            return OrderItemRepository.GetAll().ToList();
+            return _orderItemRepository.GetAllOrderItems().Select(_mapper.Map<OrderItemModel>);
         }
 
-        public List<OrderItemResult> GetOrderViewItems(int OrderId)
+        public IEnumerable<OrderItemResult> GetOrderViewItems(int OrderId)
         {
-            return OrderItemRepository.Get(oi=>oi.OrderId==OrderId, includeProperties: $"{nameof(Item)}").Select(oi=>new OrderItemResult { 
-                OrderItemId=oi.OrderItemId,
-                Description=oi.Item.Description,
-                Quantity=oi.Quantity,
-                Price=oi.Price 
-            }).ToList();
+            return _orderItemRepository.GetOrderViewItems(OrderId);
         }
 
-        public OrderItem AddOrderItem(OrderItem OrderItem)
+        public OrderItemModel AddOrderItem(OrderItemModel OrderItem)
         {
-            OrderItem orderItemAdded=OrderItemRepository.Insert(OrderItem);
-            _unitOfWork.SaveChanges();
-            return orderItemAdded;
+            OrderItem orderItem = _mapper.Map<OrderItem>(OrderItem);
+            orderItem           = _orderItemRepository.AddOrderItem(orderItem);
+            return _mapper.Map<OrderItemModel>(orderItem);
         }
 
-        public OrderItem GetOrderItem(int OrderItemId)
+        public OrderItemModel GetOrderItem(int OrderItemId)
         {
-            return OrderItemRepository.GetById(OrderItemId);
+            OrderItem orderItem = _orderItemRepository.GetOrderItem(OrderItemId);
+            return _mapper.Map<OrderItemModel>(orderItem);
         }
 
-        public bool UpdateOrderItem(OrderItem OrderItem)
+        public bool UpdateOrderItem(OrderItemModel OrderItem)
         {
-            OrderItemRepository.Update(OrderItem);
-            _unitOfWork.SaveChanges();
-            return true;
+            OrderItem orderItem = _orderItemRepository.GetOrderItem(OrderItem.OrderItemId);
+            _mapper.Map(OrderItem, orderItem);
+            return _orderItemRepository.UpdateOrderItem(orderItem);
         }
 
         public bool DeleteOrderItem(int OrderItemId)
         {
-            OrderItemRepository.DeleteById(OrderItemId);
-            _unitOfWork.SaveChanges();
-            return true;
+            return _orderItemRepository.DeleteOrderItem(OrderItemId);
         }
 
-        public List<OrderItem> AddOrderItems(int OrderId,int[] ItemId, int[] Quantity)
+        public IEnumerable<OrderItemModel> AddOrderItems(int OrderId,int[] ItemId, int[] Quantity)
         {
             List<OrderItem> orderItems = new List<OrderItem>();
             for (int i = 0; i < ItemId.Length; i++)
             {
-                OrderItem orderItem = OrderItemRepository.Insert(new OrderItem { OrderId = OrderId, ItemId = ItemId[i], Quantity = Quantity[i], Price = ItemRepository.GetById(ItemId[i]).Price });
+                OrderItem orderItem = _orderItemRepository.AddOrderItem(new OrderItem { OrderId = OrderId, ItemId = ItemId[i], Quantity = Quantity[i], Price = _itemRepository.GetItem(ItemId[i]).Price });
                 orderItems.Add(orderItem);
             }
-            Order order = OrderRepository.GetById(OrderId);
+            Order order = _orderRepository.GetOrder(OrderId);
             order.Subtotal = orderItems.Sum(o => o.Quantity * o.Price);
             order.GrandTotal = order.Subtotal * 1.15m;
-            OrderRepository.Update(order);
-            _unitOfWork.SaveChanges();
-            return orderItems;
+            _orderRepository.UpdateOrder(order);
+            return orderItems.Select(_mapper.Map<OrderItemModel>);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ShopWorld.Shared.Entities;
+﻿using ShopWorld.Shared;
+using ShopWorld.Shared.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,10 +8,10 @@ namespace ShopWorld.BusinessLogic
 {
     public interface IEmployeeLogic
     {
-        List<Employee> GetAllEmployees();
-        Employee AddEmployee(Employee Employee);
-        Employee GetEmployee(int EmployeeId);
-        bool UpdateEmployee(Employee Employee);
+        IEnumerable<EmployeeModel> GetAllEmployees();
+        EmployeeModel AddEmployee(EmployeeModel Employee);
+        EmployeeModel GetEmployee(int EmployeeId);
+        bool UpdateEmployee(EmployeeModel Employee);
         bool DeleteEmployee(int EmployeeId);
     }
 }
