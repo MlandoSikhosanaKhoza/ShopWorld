@@ -6,7 +6,7 @@ using ShopWorld.BusinessLogic;
 using ShopWorld.Shared;
 using ShopWorld.Shared.Models;
 
-namespace ShopWorld.API.Controllers
+namespace ShopWorld.Api.Controllers
 {
     [Route("api/[controller][action]")]
     [ApiController]
@@ -56,7 +56,7 @@ namespace ShopWorld.API.Controllers
             {
                 return Ok(_employeeLogic.AddEmployee(employee));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace ShopWorld.API.Controllers
             {
                 return Ok(_employeeLogic.UpdateEmployee(employee));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
 
         /// <summary>

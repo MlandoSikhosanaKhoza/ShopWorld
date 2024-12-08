@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShopWorld.BusinessLogic;
 using ShopWorld.Shared;
 
-namespace ShopWorld.API.Controllers
+namespace ShopWorld.Api.Controllers
 {
     [Route("api/[controller][action]")]
     [ApiController]
@@ -25,7 +25,7 @@ namespace ShopWorld.API.Controllers
             {
                 return Ok(_authorizationLogic.Login(Input.MobileNumber));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
 
         /// <summary>

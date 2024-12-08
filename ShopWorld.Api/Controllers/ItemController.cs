@@ -7,7 +7,7 @@ using ShopWorld.Shared;
 using ShopWorld.Shared.Models;
 using System.Data;
 
-namespace ShopWorld.API.Controllers
+namespace ShopWorld.Api.Controllers
 {
     [Route("api/[controller][action]")]
     [ApiController]
@@ -32,7 +32,7 @@ namespace ShopWorld.API.Controllers
             return Ok(base64);
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme,Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json",Type = typeof(ItemModel))]
         public IActionResult _AddItem(ItemInputModel ItemToAdd)
@@ -41,7 +41,7 @@ namespace ShopWorld.API.Controllers
             {
                 return Ok(_itemLogic.AddItem(ItemToAdd));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
         
         [HttpGet]
@@ -51,7 +51,7 @@ namespace ShopWorld.API.Controllers
             return Ok(_itemLogic.GetItem(ItemId));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _UpdateItem(ItemInputModel ItemToUpdate) {
@@ -59,10 +59,10 @@ namespace ShopWorld.API.Controllers
             {
                 return Ok(_itemLogic.UpdateItem(ItemToUpdate));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json",Type = typeof(bool))]
         public IActionResult _DeleteItem(int ItemId)

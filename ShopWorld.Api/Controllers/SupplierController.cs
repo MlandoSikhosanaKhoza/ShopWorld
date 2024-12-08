@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ShopWorld.Shared.Models;
 
-namespace ShopWorld.API.Controllers
+namespace ShopWorld.Api.Controllers
 {
     [Route("api/[controller][action]")]
     [ApiController]
@@ -19,7 +19,7 @@ namespace ShopWorld.API.Controllers
             _supplierLogic = supplierLogic;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(IEnumerable<SupplierModel>))]
         public IActionResult _GetAllSuppliers()
@@ -27,7 +27,7 @@ namespace ShopWorld.API.Controllers
             return Ok(_supplierLogic.GetSuppliers());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(IEnumerable<SupplierModel>))]
         public IActionResult _SearchSuppliers(string Search)
@@ -35,7 +35,7 @@ namespace ShopWorld.API.Controllers
             return Ok(_supplierLogic.SearchSuppliers(Search));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(SupplierModel))]
         public IActionResult _GetSupplierById(int SupplierId)
@@ -43,20 +43,27 @@ namespace ShopWorld.API.Controllers
             return Ok(_supplierLogic.GetSupplierById(SupplierId));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(SupplierModel))]
         public IActionResult _AddSupplier(SupplierModel Supplier)
         {
-            return Ok(_supplierLogic.AddSupplier(Supplier));
+            if (ModelState.IsValid)
+            {
+                return Ok(_supplierLogic.AddSupplier(Supplier));
+            }
+            return BadRequest(ModelState.PrintError());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _UpdateSupplier(SupplierModel Supplier)
         {
-            return Ok(_supplierLogic.UpdateSupplier(Supplier));
+            if (ModelState.IsValid) {
+                return Ok(_supplierLogic.UpdateSupplier(Supplier));
+            }
+            return BadRequest(ModelState.PrintError());
         }
     }
 }

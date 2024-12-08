@@ -2,6 +2,7 @@ using ShopWorld.BusinessLogic;
 using ShopWorld.DAL;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")??"";
@@ -12,6 +13,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 #region Required Dependancy Injection
 builder.Services.AddRepository(connectionString).AddBusinessLogic();
 
@@ -26,9 +31,10 @@ builder.Services.AddControllers(options =>
 }).AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.PropertyNamingPolicy = null;
-    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.ReferenceHandler     = ReferenceHandler.IgnoreCycles;
 });
 #endregion Required Dependancy Injection
+
 var app = builder.Build();
 
 //Seeding Data

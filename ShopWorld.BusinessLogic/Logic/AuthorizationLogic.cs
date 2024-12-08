@@ -14,29 +14,30 @@ namespace ShopWorld.BusinessLogic
     public class AuthorizationLogic:IAuthorizationLogic
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly GenericRepository<Customer> CustomerRepository;
+        private readonly ICustomerRepository _customerRepository;
         private readonly IConfiguration _configuration;
-        public AuthorizationLogic(IUnitOfWork unitOfWork,IConfiguration configuration) { 
-            _unitOfWork = unitOfWork;
-            _configuration = configuration;
-            CustomerRepository=unitOfWork.GetRepository<Customer>();
+        public AuthorizationLogic(IUnitOfWork unitOfWork, IConfiguration configuration, ICustomerRepository customerRepository)
+        {
+            _unitOfWork         = unitOfWork;
+            _configuration      = configuration;
+            _customerRepository = customerRepository;
         }
 
         public LoginResult Login(string MobileNumber)
         {
-            LoginResult result = new LoginResult();
-            List<Claim> claims = new List<Claim>();
-            DateTime expiration= DateTime.UtcNow.AddDays(7);
+            LoginResult result  = new LoginResult();
+            List<Claim> claims  = new List<Claim>();
+            DateTime expiration = DateTime.UtcNow.AddDays(7);
             
-            Customer? customer = CustomerRepository.Get(c=>c.Mobile==MobileNumber).FirstOrDefault();
+            Customer? customer = _customerRepository.GetCustomerByMobileNumber(MobileNumber);
             
-            if (customer==null)
+            if (customer == null)
             {
                 result.IsAuthorized = false;
             }
             else
             {
-                result.IsAuthorized= true;
+                result.IsAuthorized = true;
                 
                 #region Claims
                 claims.Add(new Claim("CustomerId", $"{customer.CustomerId}"));
@@ -45,9 +46,9 @@ namespace ShopWorld.BusinessLogic
                 #endregion Claims
 
                 result.JwtToken = JwtTokenWriter.WriteTokenAsString(
-                    _configuration["JWT:Secret"],
-                    _configuration["JWT:ValidIssuer"],
-                    _configuration["JWT:ValidAudience"],
+                    _configuration["JWT:Secret"]??"",
+                    _configuration["JWT:ValidIssuer"]??"",
+                    _configuration["JWT:ValidAudience"]??"",
                     expiration,claims);
             }
             return result;  
@@ -66,9 +67,9 @@ namespace ShopWorld.BusinessLogic
             #endregion Claims
 
             result.JwtToken = JwtTokenWriter.WriteTokenAsString(
-                _configuration["JWT:Secret"],
-                _configuration["JWT:ValidIssuer"],
-                _configuration["JWT:ValidAudience"],
+                _configuration["JWT:Secret"]??"",
+                _configuration["JWT:ValidIssuer"]??"",
+                _configuration["JWT:ValidAudience"]??"",
                 expiration, claims);
             return result;
         }

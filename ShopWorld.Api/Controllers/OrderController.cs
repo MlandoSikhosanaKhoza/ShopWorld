@@ -8,7 +8,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ShopWorld.Shared.Models;
 
-namespace ShopWorld.API.Controllers
+namespace ShopWorld.Api.Controllers
 {
     [Route("api/[controller][action]")]
     [ApiController]
@@ -19,7 +19,7 @@ namespace ShopWorld.API.Controllers
             _orderLogic = orderLogic;
         }
 
-        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = "Admin")]
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json",Type =typeof(IEnumerable<OrderModel>))]
         public IActionResult _GetAllOrders()
@@ -43,7 +43,7 @@ namespace ShopWorld.API.Controllers
             return Ok(_orderLogic.GetCompleteOrdersForCustomer(CustomerId));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json",Type=typeof(IEnumerable<OrderModel>))]
         public IActionResult _GetOngoingOrders()
@@ -51,7 +51,7 @@ namespace ShopWorld.API.Controllers
             return Ok(_orderLogic.GetOngoingOrders());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json",Type=typeof(IEnumerable<OrderModel>))]
         public IActionResult _GetCompleteOrders()
@@ -59,21 +59,21 @@ namespace ShopWorld.API.Controllers
             return Ok(_orderLogic.GetCompleteOrders());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(IEnumerable<CustomerOrderResult>))]
         public IActionResult _GetNumberOfCustomerOrders() { 
             return Ok(_orderLogic.GetNumberOfCustomerOrders());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(IEnumerable<CustomerOrderPriceResult>))]
         public IActionResult _GetTotalSpentOfCustomerOrders() {
             return Ok(_orderLogic.GetTotalSpentOfCustomerOrders());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(IEnumerable<CustomerOrderPriceResult>))]
         public IActionResult _GetAverageSpentOfCustomerOrders()
@@ -90,7 +90,7 @@ namespace ShopWorld.API.Controllers
             {
                 return Ok(_orderLogic.AddOrder(Order));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
 
         [HttpGet]
@@ -100,14 +100,14 @@ namespace ShopWorld.API.Controllers
             return Ok(_orderLogic.GetOrder(OrderId));
         }
 
-        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = "Admin")]
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme,Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _UpdateOrder(OrderModel Order) {
             return Ok(_orderLogic.UpdateOrder(Order));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _DeleteOrder(int OrderId) { 

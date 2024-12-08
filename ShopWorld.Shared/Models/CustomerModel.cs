@@ -15,6 +15,5 @@ namespace ShopWorld.Shared.Models
         [MaxLength(12)]
         public string? Mobile { get; set; }
 
-        public List<OrderModel> Order { get; set; } = new List<OrderModel>();
     }
 }

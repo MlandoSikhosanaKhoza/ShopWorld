@@ -6,11 +6,11 @@ using ShopWorld.BusinessLogic;
 using ShopWorld.Shared;
 using ShopWorld.Shared.Models;
 
-namespace ShopWorld.API.Controllers
+namespace ShopWorld.Api.Controllers
 {
     [Route("api/[controller][action]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class CustomerController : ControllerBase
     {
         /// <summary>
@@ -20,6 +20,7 @@ namespace ShopWorld.API.Controllers
         public CustomerController(ICustomerLogic customerLogic) {
             _customerLogic = customerLogic;
         }
+
         [AllowAnonymous]
         [HttpGet]
         [Produces("application/json", Type = typeof(CustomerModel))]
@@ -27,20 +28,23 @@ namespace ShopWorld.API.Controllers
         {
             return Ok(_customerLogic.GetCustomer(CustomerId));
         }
-        [Authorize(Roles ="Admin")]
+
+        [Authorize(Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json",Type=typeof(List<CustomerModel>))]
         public IActionResult _GetCustomerList()
         {
             return Ok(_customerLogic.GetAllCustomers());
         }
-        [Authorize(Roles ="Admin")]
+
+        [Authorize(Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(List<CustomerModel>))]
         public IActionResult _SearchCustomer(string Search)
         {
             return Ok(_customerLogic.SearchForCustomers(Search));
         }
+
         [AllowAnonymous]
         [HttpGet]
         [Produces("application/json", Type = typeof(bool))]
@@ -48,16 +52,19 @@ namespace ShopWorld.API.Controllers
         {
             return Ok(_customerLogic.MobileNumberExists(Mobile));
         }
+
         [AllowAnonymous]
         [HttpPost]
         [Produces("application/json",Type = typeof(CustomerModel))]
-        public IActionResult _AddCustomer(CustomerModel CustomerObj) {
+        public IActionResult _AddCustomer(CustomerModel CustomerObj) 
+        {
             if (ModelState.IsValid)
             {
                 return Ok(_customerLogic.AddCustomer(CustomerObj));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
+
         [AllowAnonymous]
         [HttpGet]
         [Produces("application/json", Type = typeof(CustomerModel))]
@@ -65,6 +72,7 @@ namespace ShopWorld.API.Controllers
         {
             return Ok(_customerLogic.GetCustomerByMobileNumber(MobileNumber));
         }
+
         [AllowAnonymous]
         [HttpPost]
         [Produces("application/json", Type = typeof(CustomerModel))]
@@ -74,7 +82,7 @@ namespace ShopWorld.API.Controllers
             {
                 return Ok(_customerLogic.ConfigureCustomer(CustomerObj));
             }
-            return BadRequest(ModelState.Values);
+            return BadRequest(ModelState.PrintError());
         }
     }
 }

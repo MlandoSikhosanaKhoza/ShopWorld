@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ShopWorld.Shared.Models;
 
-namespace ShopWorld.API.Controllers
+namespace ShopWorld.Api.Controllers
 {
     [Route("api/[controller][action]")]
     [ApiController]
@@ -17,35 +17,35 @@ namespace ShopWorld.API.Controllers
             _orderItemLogic = orderItemLogic;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(List<OrderItemModel>))]
         public IActionResult _GetAllOrderItems() {
             return Ok(_orderItemLogic.GetAllOrderItems());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(OrderItemModel))]
         public IActionResult _AddOrderItem(OrderItemModel OrderItem) {
             return Ok(_orderItemLogic.AddOrderItem(OrderItem));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpGet]
         [Produces("application/json", Type = typeof(OrderItemModel))]
         public IActionResult _GetOrderItem(int OrderItemId) { 
             return Ok(_orderItemLogic.GetOrderItem(OrderItemId));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _UpdateOrderItem(OrderItemModel OrderItem) {
             return Ok(_orderItemLogic.UpdateOrderItem(OrderItem));
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = Rights.Administrator)]
         [HttpPost]
         [Produces("application/json", Type = typeof(bool))]
         public IActionResult _DeleteOrderItem(int OrderItemId) {
@@ -60,7 +60,7 @@ namespace ShopWorld.API.Controllers
         /// <param name="Quantity"></param>
         /// <returns></returns>
         [HttpPost]
-        [Produces("application/json",Type =typeof(List<OrderItemModel>))]
+        [Produces("application/json",Type = typeof(List<OrderItemModel>))]
         public IActionResult _AddOrderItems(OrderItemInputModel Input)
         {
             return Ok(_orderItemLogic.AddOrderItems(Input.OrderId, Input.ItemId, Input.Quantity));

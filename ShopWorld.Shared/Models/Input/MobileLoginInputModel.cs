@@ -10,6 +10,7 @@ namespace ShopWorld.Shared
     public class MobileLoginInputModel
     {
         [Required]
+        [MaxLength(14)]
         public string MobileNumber { get; set; }
     }
 }
